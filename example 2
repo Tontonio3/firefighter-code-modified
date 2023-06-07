@@ -1,0 +1,17 @@
+
+
+
+' If statement example
+
+if (include statement here, like Distance to wall > 15) then
+
+    Do stuff
+    
+ end if
+ 
+ 
+ ' Do until example
+ ' Do untils are pretty useful if you will only do that once and don't want to go back to main.
+ 
+ Do Until
+ 
