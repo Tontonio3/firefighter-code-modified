@@ -1,0 +1,191 @@
+' Chip definition
+#CHIP 16F18875
+
+' LCD definitions
+#DEFINE LCD_IO 4
+#DEFINE LCD_RS portd.0
+#DEFINE LCD_RW portd.1
+#DEFINE LCD_ENABLE portd.2
+#DEFINE LCD_DB4 portd.4
+#DEFINE LCD_DB5 portd.5
+#DEFINE LCD_DB6 portd.6
+#DEFINE LCD_DB7 portd.7
+
+' Sensor definitions
+#DEFINE LW porta.0
+#DEFINE FW porta.1
+#DEFINE FS porta.2
+#DEFINE LS porta.3
+
+' Motor/Fan definitions
+#DEFINE RMF portb.0
+#DEFINE RMB portb.1
+#DEFINE LMF portb.3
+#DEFINE LMB portb.2
+#DEFINE FAN portb.4
+
+' Input/Output port direction
+DIR porta IN
+DIR portb OUT
+
+' Variable definitions
+DIM voltage AS BYTE
+DIM distanceFront AS BYTE
+DIM voltageLeft AS BYTE
+DIM distanceLeft AS BYTE
+DIM voltageFlame AS BYTE
+DIM roomCounter AS INTEGER
+DIM xVar AS WORD
+DIM leftCounter AS INTEGER
+
+roomCounter = 0
+leftCounter = 0
+
+main:
+
+  gosub followWall
+
+goto main
+
+''SUBROUTINES''
+
+' Reads voltage values off wall detection sensors and linearizes them to compute distance, reads flame sensor voltage for flame detection
+sub readSensors
+
+ voltageLeft = ReadAD(AN0)
+ distanceLeft = (((6787/(voltageLeft-3)))-4)/5
+ voltageFront = ReadAD(AN1)
+ distanceFront = (((6787/(voltageFront-3)))-4)/5
+ voltageFlame = ReadAD(AN2)
+
+return
+
+
+' Sets the forward component of both motors to 'high'
+sub forwards
+
+  RMF = 1
+  LMF = 1
+  RMB = 0
+  LMB = 0
+
+return
+
+' Sets the backwards component of both motors to 'high'
+sub backwards
+
+  RMF = 0
+  LMF = 0
+  RMB = 1
+  LMB = 1
+
+return
+
+' Sets all motors to 'low', stopping motion
+sub stopBot
+
+  RMF = 0
+  LMF = 0
+  RMB = 0
+  LMB = 0
+
+return
+
+' Sets the right motor forward and left motor backward component to high, and all others to low
+sub turnLeftInPlace
+
+  RMF = 1
+  LMF = 0
+  RMB = 0
+  LMB = 1
+
+return
+
+' Sets the left motor forward and right motor backward component to high, and all others to low
+sub turnRightInPlace
+
+  RMF = 0
+  LMF = 1
+  RMB = 1
+  LMB = 0
+
+return
+
+' Turn that is preformed when the bot is too close to the left wall
+sub closeLeft
+
+  RMF = 0
+  LMF = 1
+  LMB = 0
+  RMB = 0
+  wait (insert time here) ms
+  gosub forwards
+  wait (insert time here) ms
+
+return
+
+' Turn that is performed when the bot is too far from the left wall
+sub farLeft
+
+  RMF = 1
+  LMF = 0
+  LMB = 0
+  RMB = 0
+  wait (insert time here) ms
+  gosub forwards
+  wait (insert time here) ms
+
+return
+
+' Turn that is preformed when the bot is too close to the left wall. Sharper turn than closeLeft.
+sub closeLeftS
+
+  gosub turnRightInPlace
+  wait (insert time here) ms
+  gosub forwards
+  wait (insert time here) ms
+
+return
+
+' Turn that is performed when the bot is too far from the left wall. Sharper turn than farLeft.
+sub farLeftS
+
+  gosub turnLeftInPlace
+  wait (insert time here) ms
+  gosub forwards
+  wait (insert time here) ms
+
+return
+
+return
+
+'  A gradual left turn.
+sub smoothTurnLeft
+
+  gosub forwards
+  wait (insert time here) ms
+  RMF = 1
+  LMF = 0
+  RMB = 0
+  LMB = 0
+  wait (insert time here) ms
+
+return
+
+'A gradual right turn.
+sub smoothTurnRight
+
+  gosub forwards
+  wait (insert time here) ms
+  RMF = 0
+  LMF = 1
+  RMB = 0
+  LMB = 0
+  wait (insert time here) ms
+
+return
+
+' Out flame?
+sub outFlame
+
+return
