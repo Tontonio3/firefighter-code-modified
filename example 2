@@ -13,5 +13,17 @@ if (include statement here, like Distance to wall > 15) then
  ' Do until example
  ' Do untils are pretty useful if you will only do that once and don't want to go back to main.
  
- Do Until
+ Do Until (Sensor = something)
+    do stuff
+ loop
+
+'For loops are really useful and really easy to set up
+'If you need to do something a set ammount of times
+'But first you need to define the variable
+
+DIM xVar AS WORD 'variable defined, now just code your for loops and you are good
+
+ For xVar = 1 To 3 ' will loop 3 times
+    do stuff
+  next
  
